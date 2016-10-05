@@ -1,0 +1,125 @@
+- job-template:
+    name: 'oooq-{release}-deploy-{partner}'
+    node: '{partner}'
+
+    scm:
+      - clone-oooq
+      - clone-collect-logs
+    builders:
+      - cleanup-environment
+      - oooq-clear-colors
+      - oooq-install-deps
+      - oooq-export-vars
+      - oooq-deploy:
+          working-dir: "/home/jenkins/quickstart"
+          requirements: "${{WORKSPACE}}/config/requirements/cira-requirements.txt"
+          config: "./config/general_config/minimal.yml"
+          release: "{release}"
+          playbook: "quickstart-extras.yml"
+          extras: ""
+      - collect-ara-results
+      - collect-logs
+    wrappers:
+      - copy-to-slave:
+          includes:
+            - '**/config/**'
+          relative-to: 'userContent'
+      - build-timeout:
+          timeout: 180
+      - timestamps
+      - workspace-cleanup
+
+    publishers:
+      - publish-to-static:
+          publish_target: 'oooq_{release}_deploy_{partner}_logs/${{BUILD_ID}}'
+
+- job-template:
+    name: 'oooq-validate-{partner}'
+    node: '{partner}'
+
+    scm:
+      - clone-oooq
+      - clone-collect-logs
+    builders:
+      - cleanup-environment
+      - oooq-export-vars
+      - shell: |
+          socketdir=$(mktemp -d /tmp/sockXXXXXX)
+          # copy ansible inventory from previous deploy
+          cp /home/jenkins/quickstart/hosts ${{WORKSPACE}}/
+      - inject:
+          properties-content: |
+            ANSIBLE_SSH_CONTROL_PATH=$socketdir/%%h-%%r
+            SSH_CONFIG="/home/jenkins/quickstart/ssh.config.ansible"
+            ANSIBLE_SSH_ARGS="-F ${{SSH_CONFIG}}"
+      - oooq-validate:
+          working-dir: "$WORKSPACE"
+          requirements: "$WORKSPACE/config/requirements/cira-requirements.txt"
+          playbook: "tempest.yml"
+          extras: "--extra-vars tempest_source=rdo --extra-vars tempest_format=venv"
+      - collect-ara-results
+      - collect-logs
+    wrappers:
+      - copy-to-slave:
+          includes:
+            - '**/config/**'
+          relative-to: 'userContent'
+      - build-timeout:
+          timeout: 180
+      - timestamps
+      - workspace-cleanup
+
+    publishers:
+      - publish-to-static:
+          publish_target: 'oooq_validate_{partner}_logs/${{BUILD_ID}}'
+
+    triggers:
+      - reverse:
+          jobs:
+            - 'oooq-liberty-deploy-{partner}'
+            - 'oooq-mitaka-deploy-{partner}'
+            - 'oooq-master-deploy-{partner}'
+        result: 'success'
+
+- job-template:
+    name: 'test-browbeat'
+    node: '{partner}'
+
+    scm:
+      - clone-browbeat
+
+    builders:
+      - install-browbeat
+
+    triggers:
+      - reverse:
+          jobs:
+            - 'oooq-validate-{partner}'
+        result: 'success'
+
+    wrappers:
+      - copy-to-slave:
+          includes:
+            - '**/config/**'
+          relative-to: 'userContent'
+      - build-timeout:
+          timeout: 180
+      - timestamps
+      - workspace-cleanup
+
+- job-template:
+    name: 'oooq-{release}-image-downloader'
+    node: '{partner}'
+
+    triggers:
+      - pollurl:
+          cron: 'H/60 * * * *'
+          polling-node: '{partner}'
+          urls:
+          - url: 'https://images.rdoproject.org/{release}/delorean/consistent/stable/delorean_hash.txt'
+            proxy: false
+            check-date: true
+
+    builders:
+      - download-oooq-images:
+          release_version: "{release}"

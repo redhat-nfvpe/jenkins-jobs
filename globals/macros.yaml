@@ -1,0 +1,230 @@
+- wrapper:
+    name: build-timeout
+    wrappers:
+      - timeout:
+          timeout: '{timeout}'
+          timeout-var: 'BUILD_TIMEOUT'
+          fail: true
+
+- builder:
+    name: cleanup-environment
+    builders:
+      - shell: |
+          # remove previous environment
+          sudo rm -rf /home/jenkins/quickstart
+          sudo rm -rf /home/jenkins/.ansible
+          sudo rm -rf /home/stack/.cache
+          sudo rm -rf /home/stack/.ansible
+          sudo rm -f /home/stack/*
+
+- builder:
+    name: oooq-deploy
+    builders:
+      - shell: |
+          pushd tripleo-quickstart
+          bash ./quickstart.sh \
+          --working-dir {working-dir} \
+          --no-clone \
+          --bootstrap \
+          --teardown all \
+          --tags all \
+          --skip-tags overcloud-validate \
+          --requirements {requirements} \
+          --config {config} \
+          --release {release} \
+          --playbook {playbook} {extras} \
+          $VIRTHOST 2>&1 | tee ${{WORKSPACE}}/job_${{BUILD_ID}}.log
+          popd
+
+
+- builder:
+    name: oooq-validate
+    builders:
+        - shell: |
+            pushd tripleo-quickstart
+            bash ./quickstart.sh \
+                --tags all \
+                --working-dir {working-dir} \
+                --no-clone \
+                --bootstrap \
+                --retain-inventory \
+                --requirements {requirements} \
+                --playbook {playbook} {extras} \
+                $VIRTHOST 2>&1 | tee ${{WORKSPACE}}/job_${{BUILD_ID}}.log
+            popd
+
+- builder:
+    name: oooq-image-build
+    builders:
+        - shell: |
+            # install additional role due to a bug in naming
+            ansible-galaxy install --role-file=${{WORKSPACE}}/tripleo-quickstart/ansible-role-requirements.yml --force
+
+            bash ./quickstart.sh \
+            --tags all \
+            --config {config} \
+            --working-dir {working-dir} \
+            --playbook {playbook} \
+            --no-clone \
+            --release {release} {extras}
+
+- builder:
+    name: oooq-install-deps
+    builders:
+      - shell: |
+          pushd tripleo-quickstart
+          sudo bash ./quickstart.sh --install-deps
+          popd
+
+- builder:
+    name: oooq-export-vars
+    builders:
+      - inject:
+          properties-content: |
+              VIRTHOST=127.0.0.2
+              ANSIBLE_CALLBACK_PLUGINS="/home/jenkins/quickstart/lib/python2.7/site-packages/ara/callback"
+              DATABASE="${WORKSPACE}/ara_database.sqlite"
+              ARA_DATABASE="sqlite:///${WORKSPACE}/ara_database.sqlite"
+
+- builder:
+    name: oooq-clear-colors
+    builders:
+      - shell: |
+          pushd tripleo-quickstart
+          sed -i 's/force_color = 1/force_color = 0\nnocolor = 1/g' ansible.cfg
+          popd
+
+- builder:
+    name: collect-logs
+    builders:
+      - shell: |
+          export ANSIBLE_INVENTORY=/home/jenkins/quickstart/hosts
+          export ANSIBLE_CONFIG=/home/jenkins/quickstart/tripleo-quickstart/ansible.cfg
+          export SSH_CONFIG="/home/jenkins/quickstart/ssh.config.ansible"
+          export ANSIBLE_SSH_ARGS="-F ${SSH_CONFIG}"
+
+          . /home/jenkins/quickstart/bin/activate
+          ansible-playbook -v \
+          -e @./config/logs/oooq.yml \
+          -e artcl_collect_dir=${WORKSPACE}/logs \
+          ./tripleo-quickstart-nfv-collect-logs/playbooks/collect-logs.yml
+          deactivate
+
+- builder:
+    name: collect-logs-validate
+    builders:
+      - shell: |
+          export ANSIBLE_INVENTORY=/home/jenkins/quickstart/hosts
+          export ANSIBLE_CONFIG=/home/jenkins/quickstart/tripleo-quickstart/ansible.cfg
+          export SSH_CONFIG="/home/jenkins/quickstart/ssh.config.ansible"
+          export ANSIBLE_SSH_ARGS="-F ${SSH_CONFIG}"
+
+          . /home/jenkins/quickstart/bin/activate
+          ansible-playbook -v \
+          -e @./config/logs/tempest.yml \
+          -e artcl_collect_dir=${WORKSPACE}/logs \
+          --limit undercloud \
+          ./tripleo-quickstart-nfv-collect-logs/playbooks/collect-logs.yml
+          deactivate
+
+- builder:
+    name: collect-ara-results
+    builders:
+      - shell: |
+          . /home/jenkins/quickstart/bin/activate
+          export ARA_DATABASE="sqlite:///${WORKSPACE}/ara_database.sqlite"
+
+          # collect ara results
+          UNREACHABLE_RESULT=$(ara stats list -f value -c Unreachable)
+          FAILED_RESULT=$(ara stats list -f value -c Failed)
+          ara generate ${WORKSPACE}/ara_results || true
+          deactivate
+
+          # parse to get final job result
+          for result in $UNREACHABLE_RESULT ; do   if [ $result != '0' ]; then     exit 1;   fi; done
+          for result in $FAILED_RESULT ; do   if [ $result != '0' ]; then     exit 1;   fi; done
+
+- builder:
+    name: install-browbeat
+    builders:
+      - shell: |
+            . /home/jenkins/quickstart/bin/activate
+            export ANSIBLE_INVENTORY=/home/jenkins/quickstart/hosts
+            export ANSIBLE_CONFIG=/home/jenkins/quickstart/triple-quickstart/ansible.cfg
+            export SSH_CONFIG=/home/jenkins/quickstart/ssh.config.ansible
+            export 'ANSIBLE_SSH_ARGS=-F /home/jenkins/quickstart/ssh.config.ansible'
+
+            ansible-playbook -v \
+            -e @./config/tests/browbeat.yml \
+            ./browbeat/ansible/install/browbeat.yml
+
+            deactivate
+
+- builder:
+    name: download-oooq-images
+    builders:
+      - shell: |
+          IMAGE_HASH=$(curl -s https://images.rdoproject.org/{release_version}/delorean/consistent/stable/delorean_hash.txt)
+          IMAGE_ROOT=/var/lib/jenkins/images/{release_version}
+          IMAGE_DIR=$IMAGE_ROOT/$IMAGE_HASH
+          mkdir -p $IMAGE_DIR
+          pushd $IMAGE_ROOT
+          pushd $IMAGE_DIR
+          wget https://images.rdoproject.org/{release_version}/delorean/consistent/stable/ironic-python-agent.tar
+          wget https://images.rdoproject.org/{release_version}/delorean/consistent/stable/ironic-python-agent.tar.md5
+          wget https://images.rdoproject.org/{release_version}/delorean/consistent/stable/overcloud-full.tar
+          wget https://images.rdoproject.org/{release_version}/delorean/consistent/stable/overcloud-full.tar.md5
+          wget https://images.rdoproject.org/{release_version}/delorean/consistent/stable/undercloud.qcow2
+          wget https://images.rdoproject.org/{release_version}/delorean/consistent/stable/undercloud.qcow2.md5
+          popd
+          rm -f current
+          ln -s $IMAGE_DIR ./current
+
+- scm:
+    name: clone-oooq
+    scm:
+      - git:
+         url: 'https://git.openstack.org/openstack/tripleo-quickstart.git'
+         branches:
+           - origin/master
+         basedir: tripleo-quickstart
+
+- scm:
+    name: clone-collect-logs
+    scm:
+      - git:
+         url: 'https://github.com/yrobla/tripleo-quickstart-nfv-collect-logs.git'
+         branches:
+           - origin/master
+         basedir: tripleo-quickstart-nfv-collect-logs
+
+- scm:
+    name: clone-browbeat
+    scm:
+      - git:
+          url: https://github.com/openstack/browbeat.git
+          branches:
+            - origin/master
+          basedir: browbeat
+
+- publisher:
+    name: publish-to-static
+    publishers:
+      - scp:
+          site: '127.0.0.1'
+          files:
+            - source: '**.log,logs/**,ara_database.sqlite,ara_results/**,job_*.log'
+              target: "{publish_target}"
+              keep-hierarchy: true
+              copy-after-failure: true
+
+- publisher:
+    name: publish-tempest-to-static
+    publishers:
+      - scp:
+          site: '127.0.0.1'
+          files:
+            - source: '**.log,logs/**,ara_database.sqlite,ara_results/**,tripleo-quickstart/nosetests.xml,tripleo-quickstart/results.subunit,tripleo-quickstart/tempest.html,job_*.log'
+              target: "{publish_target}"
+              keep-hierarchy: true
+              copy-after-failure: true

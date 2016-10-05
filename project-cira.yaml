@@ -1,0 +1,23 @@
+- project:
+    name: CIRA deployments
+
+    jobs:
+        - 'oooq-{release}-image-downloader':
+            release: mitaka
+            partner: master
+        - 'oooq-{release}-image-downloader':
+            release: master
+            partner: master
+        - 'oooq-{release}-deploy-{partner}':
+            release: liberty
+            partner: cira
+        - 'oooq-{release}-deploy-{partner}':
+            release: mitaka
+            partner: cira
+        - 'oooq-{release}-deploy-{partner}':
+            release: master
+            partner: cira
+        - 'oooq-validate-{partner}':
+            partner: cira
+        - 'test-browbeat':
+            partner: cira

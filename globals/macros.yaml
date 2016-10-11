@@ -11,11 +11,9 @@
     builders:
       - shell: |
           # remove previous environment
-          sudo rm -rf /home/jenkins/quickstart
-          sudo rm -rf /home/jenkins/.ansible
-          sudo rm -rf /home/stack/.cache
+          sudo rm -rf /home/stack/quickstart
           sudo rm -rf /home/stack/.ansible
-          sudo rm -f /home/stack/*
+          sudo rm -rf /home/stack/.cache
 
 - builder:
     name: oooq-deploy
@@ -28,7 +26,7 @@
           --bootstrap \
           --teardown all \
           --tags all \
-          --skip-tags overcloud-validate \
+          --skip-tags overcloud-validate,teardown-provision \
           --requirements {requirements} \
           --config {config} \
           --release {release} \
@@ -82,7 +80,7 @@
       - inject:
           properties-content: |
               VIRTHOST=127.0.0.2
-              ANSIBLE_CALLBACK_PLUGINS="/home/jenkins/quickstart/lib/python2.7/site-packages/ara/callback"
+              ANSIBLE_CALLBACK_PLUGINS="/home/stack/quickstart/lib/python2.7/site-packages/ara/callback"
               DATABASE="${WORKSPACE}/ara_database.sqlite"
               ARA_DATABASE="sqlite:///${WORKSPACE}/ara_database.sqlite"
 
@@ -98,12 +96,12 @@
     name: collect-logs
     builders:
       - shell: |
-          export ANSIBLE_INVENTORY=/home/jenkins/quickstart/hosts
-          export ANSIBLE_CONFIG=/home/jenkins/quickstart/tripleo-quickstart/ansible.cfg
-          export SSH_CONFIG="/home/jenkins/quickstart/ssh.config.ansible"
+          export ANSIBLE_INVENTORY=/home/stack/quickstart/hosts
+          export ANSIBLE_CONFIG=/home/stack/quickstart/tripleo-quickstart/ansible.cfg
+          export SSH_CONFIG="/home/stack/quickstart/ssh.config.ansible"
           export ANSIBLE_SSH_ARGS="-F ${SSH_CONFIG}"
 
-          . /home/jenkins/quickstart/bin/activate
+          . /home/stack/quickstart/bin/activate
           ansible-playbook -v \
           -e @./config/logs/oooq.yml \
           -e artcl_collect_dir=${WORKSPACE}/logs \
@@ -114,12 +112,12 @@
     name: collect-logs-validate
     builders:
       - shell: |
-          export ANSIBLE_INVENTORY=/home/jenkins/quickstart/hosts
-          export ANSIBLE_CONFIG=/home/jenkins/quickstart/tripleo-quickstart/ansible.cfg
-          export SSH_CONFIG="/home/jenkins/quickstart/ssh.config.ansible"
+          export ANSIBLE_INVENTORY=/home/stack/quickstart/hosts
+          export ANSIBLE_CONFIG=/home/stack/quickstart/tripleo-quickstart/ansible.cfg
+          export SSH_CONFIG="/home/stack/quickstart/ssh.config.ansible"
           export ANSIBLE_SSH_ARGS="-F ${SSH_CONFIG}"
 
-          . /home/jenkins/quickstart/bin/activate
+          . /home/stack/quickstart/bin/activate
           ansible-playbook -v \
           -e @./config/logs/tempest.yml \
           -e artcl_collect_dir=${WORKSPACE}/logs \
@@ -131,7 +129,7 @@
     name: collect-ara-results
     builders:
       - shell: |
-          . /home/jenkins/quickstart/bin/activate
+          . /home/stack/quickstart/bin/activate
           export ARA_DATABASE="sqlite:///${WORKSPACE}/ara_database.sqlite"
 
           # collect ara results
@@ -148,11 +146,11 @@
     name: install-browbeat
     builders:
       - shell: |
-            . /home/jenkins/quickstart/bin/activate
-            export ANSIBLE_INVENTORY=/home/jenkins/quickstart/hosts
-            export ANSIBLE_CONFIG=/home/jenkins/quickstart/triple-quickstart/ansible.cfg
-            export SSH_CONFIG=/home/jenkins/quickstart/ssh.config.ansible
-            export 'ANSIBLE_SSH_ARGS=-F /home/jenkins/quickstart/ssh.config.ansible'
+            . /home/stack/quickstart/bin/activate
+            export ANSIBLE_INVENTORY=/home/stack/quickstart/hosts
+            export ANSIBLE_CONFIG=/home/stack/quickstart/triple-quickstart/ansible.cfg
+            export SSH_CONFIG=/home/stack/quickstart/ssh.config.ansible
+            export 'ANSIBLE_SSH_ARGS=-F /home/stack/quickstart/ssh.config.ansible'
 
             ansible-playbook -v \
             -e @./config/tests/browbeat.yml \
@@ -165,7 +163,7 @@
     builders:
       - shell: |
           IMAGE_HASH=$(curl -s https://images.rdoproject.org/{release_version}/delorean/consistent/stable/delorean_hash.txt)
-          IMAGE_ROOT=/var/lib/jenkins/images/{release_version}
+          IMAGE_ROOT=/home/stack/images/{release_version}
           IMAGE_DIR=$IMAGE_ROOT/$IMAGE_HASH
           mkdir -p $IMAGE_DIR
           pushd $IMAGE_ROOT

@@ -11,7 +11,7 @@
       - oooq-install-deps
       - oooq-export-vars
       - oooq-deploy:
-          working-dir: "/home/jenkins/quickstart"
+          working-dir: "/home/stack/quickstart"
           requirements: "${{WORKSPACE}}/config/requirements/cira-requirements.txt"
           config: "./config/general_config/minimal.yml"
           release: "{release}"
@@ -46,11 +46,11 @@
       - shell: |
           socketdir=$(mktemp -d /tmp/sockXXXXXX)
           # copy ansible inventory from previous deploy
-          cp /home/jenkins/quickstart/hosts ${{WORKSPACE}}/
+          cp /home/stack/quickstart/hosts ${{WORKSPACE}}/
       - inject:
           properties-content: |
             ANSIBLE_SSH_CONTROL_PATH=$socketdir/%%h-%%r
-            SSH_CONFIG="/home/jenkins/quickstart/ssh.config.ansible"
+            SSH_CONFIG="/home/stack/quickstart/ssh.config.ansible"
             ANSIBLE_SSH_ARGS="-F ${{SSH_CONFIG}}"
       - oooq-validate:
           working-dir: "$WORKSPACE"

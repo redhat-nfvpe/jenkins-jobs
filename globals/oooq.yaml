@@ -41,6 +41,7 @@
       - clone-oooq
       - clone-collect-logs
     builders:
+      - oooq-clear-colors
       - oooq-export-vars
       - shell: |
           socketdir=$(mktemp -d /tmp/sockXXXXXX)
@@ -49,7 +50,7 @@
       - inject:
           properties-content: |
             ANSIBLE_SSH_CONTROL_PATH=$socketdir/%%h-%%r
-            SSH_CONFIG="/home/stack/quickstart/ssh.config.ansible"
+            SSH_CONFIG=/home/stack/quickstart/ssh.config.ansible
             ANSIBLE_SSH_ARGS="-F ${{SSH_CONFIG}}"
       - oooq-validate:
           working-dir: "$WORKSPACE"
@@ -66,7 +67,6 @@
       - build-timeout:
           timeout: 180
       - timestamps
-      - workspace-cleanup
 
     publishers:
       - publish-to-static:

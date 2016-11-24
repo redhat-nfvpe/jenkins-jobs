@@ -41,7 +41,6 @@
       - clone-oooq
       - clone-collect-logs
     builders:
-      - cleanup-environment
       - oooq-export-vars
       - shell: |
           socketdir=$(mktemp -d /tmp/sockXXXXXX)

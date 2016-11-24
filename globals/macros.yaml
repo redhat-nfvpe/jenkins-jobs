@@ -139,6 +139,10 @@
           ara generate ${WORKSPACE}/ara_results || true
           deactivate
 
+- builder:
+    name: collect-exit-code
+    builders:
+      - shell: |
           # parse to get final job result
           for result in $UNREACHABLE_RESULT ; do   if [ $result != '0' ]; then     exit 1;   fi; done
           for result in $FAILED_RESULT ; do   if [ $result != '0' ]; then     exit 1;   fi; done

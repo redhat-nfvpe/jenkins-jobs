@@ -19,6 +19,7 @@
           extras: ""
       - collect-ara-results
       - collect-logs
+      - collect-exit-code
     wrappers:
       - copy-to-slave:
           includes:
@@ -59,6 +60,7 @@
           extras: "--extra-vars tempest_source=rdo --extra-vars tempest_format=venv --extra-vars run_tempest=true"
       - collect-ara-results
       - collect-logs
+      - collect-exit-code
     wrappers:
       - copy-to-slave:
           includes:

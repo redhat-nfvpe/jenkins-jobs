@@ -56,7 +56,7 @@
           working-dir: "$WORKSPACE"
           requirements: "$WORKSPACE/config/requirements/cira-requirements.txt"
           playbook: "tempest.yml"
-          extras: "--extra-vars tempest_source=rdo --extra-vars tempest_format=venv"
+          extras: "--extra-vars tempest_source=rdo --extra-vars tempest_format=venv --extra-vars run_tempest=true"
       - collect-ara-results
       - collect-logs
     wrappers:

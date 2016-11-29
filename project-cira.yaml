@@ -6,6 +6,9 @@
             release: mitaka
             partner: master
         - 'oooq-{release}-image-downloader':
+            release: newton
+            partner: master
+        - 'oooq-{release}-image-downloader':
             release: master
             partner: master
         - 'oooq-{release}-deploy-{partner}':
@@ -13,6 +16,9 @@
             partner: cira
         - 'oooq-{release}-deploy-{partner}':
             release: mitaka
+            partner: cira
+        - 'oooq-{release}-deploy-{partner}':
+            release: newton
             partner: cira
         - 'oooq-{release}-deploy-{partner}':
             release: master

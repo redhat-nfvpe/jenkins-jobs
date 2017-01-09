@@ -28,6 +28,7 @@
           --tags all \
           --skip-tags overcloud-validate,teardown-provision \
           --requirements {requirements} \
+          --requirements requirements.txt \
           --requirements quickstart-extras-requirements.txt \
           --config {config} \
           --release {release} \

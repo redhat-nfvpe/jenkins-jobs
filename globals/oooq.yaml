@@ -186,7 +186,7 @@
           sudo rm -rf /home/stack/images/{distro}/
           sudo mkdir -p /home/stack/images/{distro}/
           sudo chown stack:stack /home/stack/images/{distro}/
-          cp -R /home/stack/oooq-images/* /home/stack/images/{distro}/
+          cp -R ${{WORKSPACE}}/oooq-images/* /home/stack/images/{distro}/
       - collect-ara-results
       - collect-exit-code
     wrappers:

@@ -33,4 +33,12 @@
         - 'oooq-{release}-osp_deploy-{partner}':
             release: osp10
             partner: cira
+        - 'oooq-{release}-{distro}-build-{partner}':
+            release: liberty
+            partner: cira
+            distro: osp8
+        - 'oooq-{release}-{distro}-build-{partner}':
+            release: newton
+            partner: cira
+            distro: osp10
 

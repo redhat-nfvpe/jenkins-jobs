@@ -174,16 +174,16 @@
     builders:
       - cleanup-environment
       - oooq-image-build:
-          working-dir: "${{WORKSPACE}}/tripleo-quickstart"
+          working-dir: "/home/stack/quickstart"
           config: "./config/general_config/minimal.yml"
           playbook: "build-images.yml"
           release: "{release}"
           extras: "-e jenkins_workspace=${{WORKSPACE}} -e @../config/build/{distro}_{partner}.yml  -e @/opt/passwords.yml localhost"
       - shell: |
-          sudo rm -rf /opt/{distro}_images
-          sudo mkdir -p /opt/{distro}_images
-          sudo chown stack:stack /opt/{distro}_images
-          cp -R ${{WORKSPACE}}/oooq-images/* /opt/{distro}_images/
+          sudo rm -rf /home/stack/images/{distro}/
+          sudo mkdir -p /home/stack/images/{distro}/
+          sudo chown stack:stack /home/stack/images/{distro}/
+          cp -R /home/stack/oooq-images/* /home/stack/images/{distro}/
       - collect-ara-results
       - collect-exit-code
     wrappers:

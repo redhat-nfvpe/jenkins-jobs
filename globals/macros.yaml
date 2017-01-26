@@ -58,7 +58,7 @@
     builders:
         - shell: |
             # install additional role due to a bug in naming
-            sudo ansible-galaxy install --role-file=${{WORKSPACE}}/tripleo-quickstart/ansible-role-requirements.yml --force
+            ansible-galaxy install --role-file=${{WORKSPACE}}/tripleo-quickstart/ansible-role-requirements.yml --force -p /home/stack/quickstart/usr/local/share/tripleo-quickstart/roles
 
             pushd tripleo-quickstart
             bash ./quickstart.sh \
@@ -67,7 +67,8 @@
             --working-dir {working-dir} \
             --playbook {playbook} \
             --no-clone \
-            --release {release} {extras}
+            --release {release} {extras} \
+            $VIRTHOST 2>&1 | tee ${{WORKSPACE}}/job_${{BUILD_ID}}.log
             popd
 
 - builder:

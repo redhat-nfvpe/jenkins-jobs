@@ -58,8 +58,9 @@
     builders:
         - shell: |
             # install additional role due to a bug in naming
-            ansible-galaxy install --role-file=/home/stack/quickstart/tripleo-quickstart/ansible-role-requirements.yml --force
+            sudo ansible-galaxy install --role-file=${{WORKSPACE}}/tripleo-quickstart/ansible-role-requirements.yml --force
 
+            pushd tripleo-quickstart
             bash ./quickstart.sh \
             --tags all \
             --config {config} \
@@ -67,6 +68,7 @@
             --playbook {playbook} \
             --no-clone \
             --release {release} {extras}
+            popd
 
 - builder:
     name: oooq-install-deps

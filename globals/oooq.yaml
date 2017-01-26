@@ -173,6 +173,9 @@
 
     builders:
       - cleanup-environment
+      - oooq-clear-colors
+      - oooq-install-deps
+      - oooq-export-vars
       - oooq-image-build:
           working-dir: "/home/stack/quickstart"
           config: "./config/general_config/minimal.yml"

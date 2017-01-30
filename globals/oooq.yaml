@@ -146,7 +146,7 @@
           config: "./config/general_config/minimal.yml"
           release: "{release}"
           playbook: "quickstart-extras.yml"
-          extras: "-e @/opt/passwords.yml -e jenkins_workspace=${{WORKSPACE}}"
+          extras: "-e jenkins_workspace=${{WORKSPACE}}"
       - collect-ara-results
       - collect-logs
       - collect-exit-code

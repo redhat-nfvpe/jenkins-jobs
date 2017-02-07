@@ -88,6 +88,7 @@
               ANSIBLE_CALLBACK_PLUGINS="/home/stack/quickstart/lib/python2.7/site-packages/ara/callback"
               DATABASE="${WORKSPACE}/ara_database.sqlite"
               ARA_DATABASE="sqlite:///${WORKSPACE}/ara_database.sqlite"
+              REPO_REMOTE_LOCATION="ftp://$(hostname --ip-address)/pub/osp_repo/osp.repo"
 
 - builder:
     name: oooq-clear-colors

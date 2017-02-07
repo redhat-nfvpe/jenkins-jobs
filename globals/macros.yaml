@@ -67,7 +67,8 @@
             --working-dir {working-dir} \
             --playbook {playbook} \
             --no-clone \
-            --release {release} {extras} \
+            --release {release} \
+            --repo_remote_location="ftp://$(hostname --ip-address)/pub/osp_repo/osp.repo" {extras} \
             $VIRTHOST 2>&1 | tee ${{WORKSPACE}}/job_${{BUILD_ID}}.log
             popd
 
@@ -88,7 +89,6 @@
               ANSIBLE_CALLBACK_PLUGINS="/home/stack/quickstart/lib/python2.7/site-packages/ara/callback"
               DATABASE="${WORKSPACE}/ara_database.sqlite"
               ARA_DATABASE="sqlite:///${WORKSPACE}/ara_database.sqlite"
-              REPO_REMOTE_LOCATION="ftp://$(hostname --ip-address)/pub/osp_repo/osp.repo"
 
 - builder:
     name: oooq-clear-colors

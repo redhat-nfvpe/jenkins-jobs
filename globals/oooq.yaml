@@ -186,6 +186,7 @@
           sudo rm -rf /home/stack/images/{distro}/
           sudo mkdir -p /home/stack/images/{distro}/
           sudo chown stack:stack /home/stack/images/{distro}/
+          mv ${{WORKSPACE}}/oooq-images/*.log ${{WORKSPACE}}/
           cp -R ${{WORKSPACE}}/oooq-images/* /home/stack/images/{distro}/
       - collect-ara-results
       - collect-exit-code
@@ -198,3 +199,6 @@
           timeout: 180
       - timestamps
       - workspace-cleanup
+    publishers:
+      - publish-to-static:
+          publish_target: 'oooq_{release}_{distro}_build_{partner}_logs/${{BUILD_ID}}'

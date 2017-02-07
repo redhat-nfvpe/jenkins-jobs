@@ -68,7 +68,7 @@
             --playbook {playbook} \
             --no-clone \
             --release {release} \
-            --repo_remote_location="ftp://$(hostname --ip-address)/pub/osp_repo/osp.repo" {extras} \
+            -e repo_remote_location="ftp://$(hostname --ip-address)/pub/osp_repo/osp.repo" {extras} \
             $VIRTHOST 2>&1 | tee ${{WORKSPACE}}/job_${{BUILD_ID}}.log
             popd
 

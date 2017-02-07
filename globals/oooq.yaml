@@ -181,7 +181,7 @@
           config: "./config/general_config/minimal.yml"
           playbook: "build-images.yml"
           release: "{release}"
-          extras: "-e jenkins_workspace=${{WORKSPACE}} -e @../config/build/{distro}_{partner}.yml -e repo_remote_location=ftp://${{HOSTNAME}}/pub/osp_repo/osp.repo"
+          extras: "-e jenkins_workspace=${{WORKSPACE}} -e @../config/build/{distro}_{partner}.yml -e repo_remote_location=ftp://$(hostname --ip-address)/pub/osp_repo/osp.repo"
       - shell: |
           sudo rm -rf /home/stack/images/{distro}/
           sudo mkdir -p /home/stack/images/{distro}/

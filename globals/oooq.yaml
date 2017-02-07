@@ -181,7 +181,7 @@
           config: "./config/general_config/minimal.yml"
           playbook: "build-images.yml"
           release: "{release}"
-          extras: "-e jenkins_workspace=${{WORKSPACE}} -e @../config/build/{distro}_{partner}.yml -e repo_remote_location=${{REPO_REMOTE_LOCATION}}"
+          extras: "-e jenkins_workspace=${{WORKSPACE}} -e @../config/build/{distro}_{partner}.yml"
       - shell: |
           sudo rm -rf /home/stack/images/{distro}/
           sudo mkdir -p /home/stack/images/{distro}/

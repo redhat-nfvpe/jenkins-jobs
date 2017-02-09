@@ -12,7 +12,7 @@
       - oooq-export-vars
       - oooq-deploy:
           working-dir: "/home/stack/quickstart"
-          requirements: "${{WORKSPACE}}/config/requirements/cira-requirements.txt"
+          requirements: "${{WORKSPACE}}/config/requirements/toad-requirements.txt"
           config: "./config/general_config/minimal.yml"
           release: "{release}"
           playbook: "quickstart-extras.yml"
@@ -55,7 +55,7 @@
             ANSIBLE_SSH_ARGS="-F ${{SSH_CONFIG}}"
       - oooq-validate:
           working-dir: "$WORKSPACE"
-          requirements: "$WORKSPACE/config/requirements/cira-requirements.txt"
+          requirements: "$WORKSPACE/config/requirements/toad-requirements.txt"
           playbook: "tempest.yml"
           extras: "--extra-vars tempest_source=rdo --extra-vars tempest_format=venv --extra-vars run_tempest=true"
       - collect-ara-results
@@ -142,7 +142,7 @@
           cp ./config/deploy/{release}_{partner}.yml /home/stack/quickstart/config/release/{release}.yml
       - oooq-deploy:
           working-dir: "/home/stack/quickstart"
-          requirements: "${{WORKSPACE}}/config/requirements/cira-requirements.txt"
+          requirements: "${{WORKSPACE}}/config/requirements/toad-requirements.txt"
           config: "./config/general_config/minimal.yml"
           release: "{release}"
           playbook: "quickstart-extras.yml"

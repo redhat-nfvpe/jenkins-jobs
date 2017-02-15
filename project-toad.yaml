@@ -1,5 +1,5 @@
 - project:
-    name: CIRA deployments
+    name: TOAD deployments
 
     jobs:
         - 'oooq-{release}-image-downloader':
@@ -13,32 +13,32 @@
             partner: master
         - 'oooq-{release}-deploy-{partner}':
             release: liberty
-            partner: cira
+            partner: toad
         - 'oooq-{release}-deploy-{partner}':
             release: mitaka
-            partner: cira
+            partner: toad
         - 'oooq-{release}-deploy-{partner}':
             release: newton
-            partner: cira
+            partner: toad
         - 'oooq-{release}-deploy-{partner}':
             release: master
-            partner: cira
+            partner: toad
         - 'oooq-validate-{partner}':
-            partner: cira
+            partner: toad
         - 'test-browbeat':
-            partner: cira
+            partner: toad
         - 'oooq-{release}-osp_deploy-{partner}':
             release: osp8
-            partner: cira
+            partner: toad
         - 'oooq-{release}-osp_deploy-{partner}':
             release: osp10
-            partner: cira
+            partner: toad
         - 'oooq-{release}-{distro}-build-{partner}':
             release: liberty
-            partner: cira
+            partner: toad
             distro: osp8
         - 'oooq-{release}-{distro}-build-{partner}':
             release: newton
-            partner: cira
+            partner: toad
             distro: osp10
 

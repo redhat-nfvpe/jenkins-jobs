@@ -221,7 +221,7 @@
           config: "./config/general_config/minimal.yml"
           release: "{release}"
           playbook: "baremetal-full-deploy.yml"
-          extras: "-e jenkins_workspace=${{WORKSPACE}} --config ${{WORKSPACE}}/toad_envs/{{hwenv}}/deploy_config.yml --extra-vars @${{WORKSPACE}}/toad_envs/{{hwenv}}/env_settings.yml"
+          extras: "-e jenkins_workspace=${{WORKSPACE}} --config ${{WORKSPACE}}/toad_envs/{hwenv}/deploy_config.yml --extra-vars @${{WORKSPACE}}/toad_envs/{hwenv}/env_settings.yml"
       - collect-ara-results
       - collect-logs
       - collect-exit-code
@@ -259,7 +259,7 @@
           config: "./config/general_config/minimal.yml"
           release: "{release}"
           playbook: "baremetal-full-deploy.yml"
-          extras: "-e jenkins_workspace=${{WORKSPACE}} --config ${{WORKSPACE}}/toad_envs/{{hwenv}}/deploy_config.yml --extra-vars @${{WORKSPACE}}/toad_envs/{{hwenv}}/env_settings.yml"
+          extras: "-e jenkins_workspace=${{WORKSPACE}} --config ${{WORKSPACE}}/toad_envs/{hwenv}/deploy_config.yml --extra-vars @${{WORKSPACE}}/toad_envs/{hwenv}/env_settings.yml"
       - collect-ara-results
       - collect-logs
       - collect-exit-code

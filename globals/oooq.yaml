@@ -204,8 +204,8 @@
           publish_target: 'oooq_{release}_{distro}_build_{partner}_logs/${{BUILD_ID}}'
 
 - job-template:
-    name: 'oooq-{release}-deploy-baremetal-{partner}'
-    node: '{partner}'
+    name: 'oooq-{release}-deploy-baremetal-{partner}-{hwenv}'
+    node: '{partner}-{hwenv}'
 
     scm:
       - clone-oooq
@@ -240,8 +240,8 @@
           publish_target: 'oooq_{release}_deploy_baremetal_{partner}_{hwenv}_logs/${{BUILD_ID}}'
 
 - job-template:
-    name: 'oooq-{release}-osp_deploy-baremetal-{partner}'
-    node: '{partner}'
+    name: 'oooq-{release}-osp_deploy-baremetal-{partner}-{hwenv}'
+    node: '{partner}-{hwenv}'
 
     scm:
       - clone-oooq

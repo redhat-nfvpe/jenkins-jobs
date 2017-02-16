@@ -41,4 +41,11 @@
             release: newton
             partner: toad
             distro: osp10
-
+        - 'oooq-{release}-osp_deploy-baremetal-{partner}-{hwenv}':
+            release: newton
+            partner: toad
+            hwenv: toad
+        - 'oooq-{release}-deploy-baremetal-{partner}-{hwenv}':
+            release: newton
+            partner: toad
+            hwenv: toad      

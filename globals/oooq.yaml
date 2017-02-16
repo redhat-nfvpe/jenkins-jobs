@@ -202,3 +202,78 @@
     publishers:
       - publish-to-static:
           publish_target: 'oooq_{release}_{distro}_build_{partner}_logs/${{BUILD_ID}}'
+
+- job-template:
+    name: 'oooq-{release}-deploy-baremetal-{partner}'
+    node: '{partner}'
+
+    scm:
+      - clone-oooq
+      - clone-collect-logs
+    builders:
+      - cleanup-environment
+      - oooq-clear-colors
+      - oooq-install-deps
+      - oooq-export-vars
+      - oooq-deploy:
+          working-dir: "/home/stack/quickstart"
+          requirements: "${{WORKSPACE}}/config/requirements/toad-requirements.txt"
+          config: "./config/general_config/minimal.yml"
+          release: "{release}"
+          playbook: "baremetal-full-deploy.yml"
+          extras: "-e jenkins_workspace=${{WORKSPACE}} --config ${{WORKSPACE}}/toad_envs/{{hwenv}}/deploy_config.yml --extra-vars @${{WORKSPACE}}/toad_envs/{{hwenv}}/env_settings.yml"
+      - collect-ara-results
+      - collect-logs
+      - collect-exit-code
+    wrappers:
+      - copy-to-slave:
+          includes:
+            - '**/config/**,**/toad_envs/**'
+          relative-to: 'userContent'
+      - build-timeout:
+          timeout: 180
+      - timestamps
+      - workspace-cleanup
+
+    publishers:
+      - publish-to-static:
+          publish_target: 'oooq_{release}_deploy_baremetal_{partner}_{hwenv}_logs/${{BUILD_ID}}'
+
+- job-template:
+    name: 'oooq-{release}-osp_deploy-baremetal-{partner}'
+    node: '{partner}'
+
+    scm:
+      - clone-oooq
+      - clone-collect-logs
+    builders:
+      - cleanup-environment
+      - oooq-export-vars
+      - oooq-install-deps
+      - shell: |
+          mkdir -p /home/stack/quickstart/config/release
+          cp ./config/deploy/{release}_{partner}.yml /home/stack/quickstart/config/release/{release}.yml
+      - oooq-deploy:
+          working-dir: "/home/stack/quickstart"
+          requirements: "${{WORKSPACE}}/config/requirements/toad-requirements.txt"
+          config: "./config/general_config/minimal.yml"
+          release: "{release}"
+          playbook: "baremetal-full-deploy.yml"
+          extras: "-e jenkins_workspace=${{WORKSPACE}} --config ${{WORKSPACE}}/toad_envs/{{hwenv}}/deploy_config.yml --extra-vars @${{WORKSPACE}}/toad_envs/{{hwenv}}/env_settings.yml"
+      - collect-ara-results
+      - collect-logs
+      - collect-exit-code
+    wrappers:
+      - copy-to-slave:
+          includes:
+            - '**/config/**,**/toad_envs/**'
+          relative-to: 'userContent'
+      - build-timeout:
+          timeout: 180
+      - timestamps
+      - workspace-cleanup
+
+    publishers:
+      - publish-to-static:
+          publish_target: 'oooq_{release}_osp_deploy_baremetal_{partner}_{hwenv}_logs/${{BUILD_ID}}'
+

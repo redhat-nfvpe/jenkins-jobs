@@ -141,7 +141,7 @@
           # collect ara results
           UNREACHABLE_RESULT=$(ara stats list -f value -c Unreachable)
           FAILED_RESULT=$(ara stats list -f value -c Failed)
-          ara generate ${WORKSPACE}/ara_results || true
+          ara generate html ${WORKSPACE}/ara_results || true
           deactivate
 
 - builder:

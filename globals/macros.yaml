@@ -20,7 +20,7 @@
     builders:
       - shell: |
           sshvars=($SSH_CLIENT)
-          JENKINS_MASTER_IP=${sshvars[0]}
+          JENKINS_MASTER_IP=${{sshvars[0]}}
           JENKINS_SLAVE_IP=$(hostname --ip-address)
 
           pushd tripleo-quickstart
@@ -65,7 +65,7 @@
     builders:
         - shell: |
             sshvars=($SSH_CLIENT)
-            JENKINS_MASTER_IP=${sshvars[0]}
+            JENKINS_MASTER_IP=${{sshvars[0]}}
             JENKINS_SLAVE_IP=$(hostname --ip-address)
 
             # install additional role due to a bug in naming

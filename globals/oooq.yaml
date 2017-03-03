@@ -146,6 +146,7 @@
           config: "./config/general_config/minimal.yml"
           release: "{release}"
           playbook: "quickstart-extras.yml"
+          extras: ""
       - collect-ara-results
       - collect-logs
       - collect-exit-code

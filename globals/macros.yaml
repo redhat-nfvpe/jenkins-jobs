@@ -19,6 +19,10 @@
     name: oooq-deploy
     builders:
       - shell: |
+          sshvars=($SSH_CLIENT)
+          JENKINS_MASTER_IP=${sshvars[0]}
+          JENKINS_SLAVE_IP=$(hostname --ip-address)
+
           pushd tripleo-quickstart
           bash ./quickstart.sh \
           --working-dir {working-dir} \
@@ -32,6 +36,9 @@
           --requirements quickstart-extras-requirements.txt \
           --config {config} \
           --release {release} \
+          -e jenkins_master_address=${{JENKINS_MASTER_IP}} \
+          -e jenkins_slave_address=${{JENKINS_SLAVE_IP}} \
+          -e jenkins_workspace=${{WORKSPACE}} \
           --playbook {playbook} {extras} \
           $VIRTHOST 2>&1 | tee ${{WORKSPACE}}/job_${{BUILD_ID}}.log
           popd
@@ -57,6 +64,10 @@
     name: oooq-image-build
     builders:
         - shell: |
+            sshvars=($SSH_CLIENT)
+            JENKINS_MASTER_IP=${sshvars[0]}
+            JENKINS_SLAVE_IP=$(hostname --ip-address)
+
             # install additional role due to a bug in naming
             ansible-galaxy install --role-file=${{WORKSPACE}}/tripleo-quickstart/ansible-role-requirements.yml --force -p /home/stack/quickstart/usr/local/share/tripleo-quickstart/roles
 
@@ -67,8 +78,10 @@
             --working-dir {working-dir} \
             --playbook {playbook} \
             --no-clone \
-            --release {release} \
-            -e repo_remote_location="ftp://$(hostname --ip-address)/pub/osp_repo/osp.repo" {extras} \
+            --release {release} {extras} \
+            -e jenkins_master_address=${{JENKINS_MASTER_IP}} \
+            -e jenkins_slave_address=${{JENKINS_SLAVE_IP}} \
+            -e jenkins_workspace=${{WORKSPACE}} \
             $VIRTHOST 2>&1 | tee ${{WORKSPACE}}/job_${{BUILD_ID}}.log
             popd
 

@@ -146,7 +146,6 @@
           config: "./config/general_config/minimal.yml"
           release: "{release}"
           playbook: "quickstart-extras.yml"
-          extras: "-e jenkins_workspace=${{WORKSPACE}}"
       - collect-ara-results
       - collect-logs
       - collect-exit-code
@@ -181,7 +180,7 @@
           config: "./config/general_config/minimal.yml"
           playbook: "build-images.yml"
           release: "{release}"
-          extras: "-e jenkins_workspace=${{WORKSPACE}} -e @../config/build/{distro}_{partner}.yml"
+          extras: "-e @../config/build/{distro}_{partner}.yml"
       - shell: |
           sudo rm -rf /home/stack/images/{distro}/
           sudo mkdir -p /home/stack/images/{distro}/
@@ -221,7 +220,7 @@
           config: "./config/general_config/minimal.yml"
           release: "{release}"
           playbook: "baremetal-full-deploy.yml"
-          extras: "-e jenkins_workspace=${{WORKSPACE}} --config ${{WORKSPACE}}/toad_envs/{hwenv}/deploy_config.yml --extra-vars @${{WORKSPACE}}/toad_envs/{hwenv}/env_settings.yml"
+          extras: "--config ${{WORKSPACE}}/toad_envs/{hwenv}/deploy_config.yml --extra-vars @${{WORKSPACE}}/toad_envs/{hwenv}/env_settings.yml"
       - collect-ara-results
       - collect-logs
       - collect-exit-code
@@ -259,7 +258,7 @@
           config: "./config/general_config/minimal.yml"
           release: "{release}"
           playbook: "baremetal-full-deploy.yml"
-          extras: "-e jenkins_workspace=${{WORKSPACE}} --config ${{WORKSPACE}}/toad_envs/{hwenv}/deploy_config.yml --extra-vars @${{WORKSPACE}}/toad_envs/{hwenv}/env_settings.yml"
+          extras: "--config ${{WORKSPACE}}/toad_envs/{hwenv}/deploy_config.yml --extra-vars @${{WORKSPACE}}/toad_envs/{hwenv}/env_settings.yml"
       - collect-ara-results
       - collect-logs
       - collect-exit-code

@@ -127,7 +127,7 @@
           release_version: "{release}"
 
 - job-template:
-    name: 'oooq-{release}-osp_deploy-{partner}'
+    name: 'oooq-{release}-{distro}-osp_deploy-{partner}'
     node: '{partner}'
 
     scm:
@@ -139,7 +139,7 @@
       - oooq-install-deps
       - shell: |
           mkdir -p /home/stack/quickstart/config/release
-          cp ./config/deploy/{release}_{partner}.yml /home/stack/quickstart/config/release/{release}.yml
+          cp ./config/deploy/{distro}_{partner}.yml /home/stack/quickstart/config/release/{release}.yml
       - oooq-deploy:
           working-dir: "/home/stack/quickstart"
           requirements: "${{WORKSPACE}}/config/requirements/toad-requirements.txt"
@@ -162,7 +162,7 @@
 
     publishers:
       - publish-to-static:
-          publish_target: 'oooq_{release}_osp_deploy_{partner}_logs/${{BUILD_ID}}'
+          publish_target: 'oooq_{release}_{distro}_osp_deploy_{partner}_logs/${{BUILD_ID}}'
 
 - job-template:
     name: 'oooq-{release}-{distro}-build-{partner}'
@@ -240,7 +240,7 @@
           publish_target: 'oooq_{release}_deploy_baremetal_{partner}_{hwenv}_logs/${{BUILD_ID}}'
 
 - job-template:
-    name: 'oooq-{release}-osp_deploy-baremetal-{partner}-{hwenv}'
+    name: 'oooq-{release}-{distro}-osp_deploy-baremetal-{partner}-{hwenv}'
     node: '{partner}-{hwenv}'
 
     scm:
@@ -252,7 +252,7 @@
       - oooq-install-deps
       - shell: |
           mkdir -p /home/stack/quickstart/config/release
-          cp ./config/deploy/{release}_{partner}.yml /home/stack/quickstart/config/release/{release}.yml
+          cp ./config/deploy/{distro}_{partner}.yml /home/stack/quickstart/config/release/{release}.yml
       - oooq-deploy:
           working-dir: "/home/stack/quickstart"
           requirements: "${{WORKSPACE}}/config/requirements/toad-requirements.txt"
@@ -275,5 +275,5 @@
 
     publishers:
       - publish-to-static:
-          publish_target: 'oooq_{release}_osp_deploy_baremetal_{partner}_{hwenv}_logs/${{BUILD_ID}}'
+          publish_target: 'oooq_{release}_{distro}_osp_deploy_baremetal_{partner}_{hwenv}_logs/${{BUILD_ID}}'
 

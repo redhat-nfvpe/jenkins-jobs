@@ -99,9 +99,6 @@
       - inject:
           properties-content: |
               VIRTHOST=127.0.0.2
-              ANSIBLE_CALLBACK_PLUGINS="/home/stack/quickstart/lib/python2.7/site-packages/ara/callback"
-              DATABASE="${WORKSPACE}/ara_database.sqlite"
-              ARA_DATABASE="sqlite:///${WORKSPACE}/ara_database.sqlite"
 
 - builder:
     name: oooq-clear-colors
@@ -149,7 +146,7 @@
     builders:
       - shell: |
           . /home/stack/quickstart/bin/activate
-          export ARA_DATABASE="sqlite:///${WORKSPACE}/ara_database.sqlite"
+          export ARA_DATABASE="sqlite:////home/stack/quickstart/ara.sqlite"
 
           # collect ara results
           UNREACHABLE_RESULT=$(ara stats list -f value -c Unreachable)

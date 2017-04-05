@@ -21,7 +21,7 @@
       - shell: |
           sshvars=($SSH_CLIENT)
           JENKINS_MASTER_IP=${{sshvars[0]}}
-          JENKINS_SLAVE_IP=$(hostname --ip-address)
+          JENKINS_SLAVE_IP=$(ip route get 1 | awk '{ print $NF; exit }')
 
           pushd tripleo-quickstart
           bash ./quickstart.sh \
@@ -66,7 +66,7 @@
         - shell: |
             sshvars=($SSH_CLIENT)
             JENKINS_MASTER_IP=${{sshvars[0]}}
-            JENKINS_SLAVE_IP=$(hostname --ip-address)
+            JENKINS_SLAVE_IP=$(ip route get 1 | awk '{ print $NF; exit }')
 
             # install additional role due to a bug in naming
             ansible-galaxy install --role-file=${{WORKSPACE}}/tripleo-quickstart/ansible-role-requirements.yml --force -p /home/stack/quickstart/usr/local/share/tripleo-quickstart/roles

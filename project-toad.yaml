@@ -21,6 +21,9 @@
             release: newton
             partner: toad
         - 'oooq-{release}-deploy-{partner}':
+            release: ocata
+            partner: toad
+        - 'oooq-{release}-deploy-{partner}':
             release: master
             partner: toad
         - 'oooq-validate-{partner}':
@@ -50,5 +53,9 @@
             hwenv: toad
         - 'oooq-{release}-deploy-baremetal-{partner}-{hwenv}':
             release: newton
+            partner: toad
+            hwenv: toad
+        - 'oooq-{release}-deploy-baremetal-{partner}-{hwenv}':
+            release: ocata
             partner: toad
             hwenv: toad

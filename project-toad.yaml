@@ -9,6 +9,9 @@
             release: newton
             partner: master
         - 'oooq-{release}-image-downloader':
+            release: ocata
+            partner: master
+        - 'oooq-{release}-image-downloader':
             release: master
             partner: master
         - 'oooq-{release}-deploy-{partner}':
@@ -38,6 +41,10 @@
             distro: osp10
             release: newton
             partner: toad
+        - 'oooq-{release}-{distro}-osp_deploy-{partner}':
+            distro: osp11
+            release: ocata
+            partner: toad
         - 'oooq-{release}-{distro}-build-{partner}':
             release: liberty
             partner: toad
@@ -46,9 +53,18 @@
             release: newton
             partner: toad
             distro: osp10
+        - 'oooq-{release}-{distro}-build-{partner}':
+            release: ocata
+            partner: toad
+            distro: osp11
         - 'oooq-{release}-{distro}-osp_deploy-baremetal-{partner}-{hwenv}':
             release: newton
             distro: osp10
+            partner: toad
+            hwenv: toad
+        - 'oooq-{release}-{distro}-osp_deploy-baremetal-{partner}-{hwenv}':
+            release: ocata
+            distro: osp11
             partner: toad
             hwenv: toad
         - 'oooq-{release}-deploy-baremetal-{partner}-{hwenv}':

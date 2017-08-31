@@ -81,6 +81,7 @@
             - 'oooq-mitaka-deploy-{partner}'
             - 'oooq-newton-deploy-{partner}'
             - 'oooq-ocata-deploy-{partner}'
+            - 'oooq-pike-deploy-{partner}'
             - 'oooq-master-deploy-{partner}'
         result: 'success'
 

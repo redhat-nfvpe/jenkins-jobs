@@ -12,6 +12,9 @@
             release: ocata
             partner: master
         - 'oooq-{release}-image-downloader':
+            release: pike
+            partner: master
+        - 'oooq-{release}-image-downloader':
             release: master
             partner: master
         - 'oooq-{release}-deploy-{partner}':
@@ -25,6 +28,9 @@
             partner: toad
         - 'oooq-{release}-deploy-{partner}':
             release: ocata
+            partner: toad
+        - 'oooq-{release}-deploy-{partner}':
+            release: pike
             partner: toad
         - 'oooq-{release}-deploy-{partner}':
             release: master
@@ -45,6 +51,10 @@
             distro: osp11
             release: ocata
             partner: toad
+        - 'oooq-{release}-{distro}-osp_deploy-{partner}':
+            distro: osp12
+            release: pike
+            partner: toad
         - 'oooq-{release}-{distro}-build-{partner}':
             release: liberty
             partner: toad
@@ -57,6 +67,10 @@
             release: ocata
             partner: toad
             distro: osp11
+        - 'oooq-{release}-{distro}-build-{partner}':
+            release: pike
+            partner: toad
+            distro: osp12
         - 'oooq-{release}-{distro}-osp_deploy-baremetal-{partner}-{hwenv}':
             release: newton
             distro: osp10
@@ -67,11 +81,20 @@
             distro: osp11
             partner: toad
             hwenv: toad
+        - 'oooq-{release}-{distro}-osp_deploy-baremetal-{partner}-{hwenv}':
+            release: pike
+            distro: osp12
+            partner: toad
+            hwenv: toad
         - 'oooq-{release}-deploy-baremetal-{partner}-{hwenv}':
             release: newton
             partner: toad
             hwenv: toad
         - 'oooq-{release}-deploy-baremetal-{partner}-{hwenv}':
             release: ocata
+            partner: toad
+            hwenv: toad
+        - 'oooq-{release}-deploy-baremetal-{partner}-{hwenv}':
+            release: pike
             partner: toad
             hwenv: toad
